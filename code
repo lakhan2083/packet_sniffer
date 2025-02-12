@@ -1,0 +1,55 @@
+from scapy.all import sniff, Ether, IP, TCP, UDP, Raw
+from tabulate import tabulate
+
+# Function to process captured packets
+def packet_handler(packet):
+    if packet.haslayer(Ether):  # Extract Ethernet details
+        dest_mac = packet[Ether].dst
+        src_mac = packet[Ether].src
+        eth_proto = hex(packet[Ether].type)
+
+        ip_version = ttl = protocol = src_ip = dst_ip = "N/A"
+
+        if packet.haslayer(IP):  # Extract IP details
+            ip_version = packet[IP].version
+            ttl = packet[IP].ttl
+            protocol_num = packet[IP].proto
+            src_ip = packet[IP].src
+            dst_ip = packet[IP].dst
+
+            # Determine protocol type
+            if packet.haslayer(TCP):
+                protocol = "TCP"
+            elif packet.haslayer(UDP):
+                protocol = "UDP"
+            elif packet.haslayer(Raw) and (protocol_num == 6 or protocol_num == 17):
+                protocol = "HTTP"  # Assuming raw payload in TCP/UDP could be HTTP
+            else:
+                protocol = "Other"
+
+            # Structure the data in 2 columns, 4 rows format
+            table_data = [
+                ["Destination MAC", dest_mac],
+                ["Source MAC", src_mac],
+                ["Ethernet Protocol", eth_proto],
+                ["IP Version", ip_version],
+                ["TTL", ttl],
+                ["Protocol", protocol],
+                ["Source IP", src_ip],
+                ["Destination IP", dst_ip]
+            ]
+
+            # Split data into 2-column, 4-row format
+            formatted_table = [
+                [table_data[0][0], table_data[0][1], table_data[1][0], table_data[1][1]],
+                [table_data[2][0], table_data[2][1], table_data[3][0], table_data[3][1]],
+                [table_data[4][0], table_data[4][1], table_data[5][0], table_data[5][1]],
+                [table_data[6][0], table_data[6][1], table_data[7][0], table_data[7][1]]
+            ]
+
+            # Print the formatted table
+            print("\n" + tabulate(formatted_table, headers=["Field", "Value", "Field", "Value"], tablefmt="fancy_grid"))
+
+# Start sniffing network packets
+print("Starting network sniffer... (Press Ctrl+C to stop)")
+sniff(prn=packet_handler, store=False)
