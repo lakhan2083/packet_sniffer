@@ -1,4 +1,4 @@
-# 🕵️‍♂️ Packet_Sniffer – Live Packet Capture & Analysis
+# 🕵️‍♂️ Codealpha_task_1_Packet_Sniffer – Live Packet Capture & Analysis
 
 ## 📌 About the Project
 This **Python-based Network Sniffer** captures live network packets, extracts essential details, and displays them in a **structured tabular format** for easy analysis. Built using **Scapy** and **Tabulate**, this tool helps in monitoring and analyzing network traffic by capturing packets and extracting information such as **MAC & IP addresses, TTL, and Protocols (TCP, UDP, HTTP).**
